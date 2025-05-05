@@ -1,0 +1,164 @@
+.teacher-dashboard {
+    font-family: 'Arial', sans-serif;
+    background-color: white;
+    color: #333;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  
+  .dashboard-title {
+    color: #d32f2f;
+    border-bottom: 2px solid #d32f2f;
+    padding-bottom: 10px;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .course-list {
+    width: 300px;
+    background-color: white;
+    border: 1px solid #d32f2f;
+    border-radius: 5px;
+    padding: 15px;
+  }
+  
+  .course-details {
+    flex: 1;
+    background-color: white;
+    border: 1px solid #d32f2f;
+    border-radius: 5px;
+    padding: 20px;
+  }
+  
+  .section-title, .course-title, .subtitle {
+    color: #d32f2f;
+  }
+  
+  .course-items {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+  }
+  
+  .course-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .course-item:hover {
+    background-color: #ffebee;
+  }
+  
+  .course-item.active {
+    background-color: #ffcdd2;
+    border-color: #d32f2f;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  
+  .tab-button {
+    padding: 8px 15px;
+    background-color: white;
+    border: 1px solid #d32f2f;
+    color: #d32f2f;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .tab-button.active {
+    background-color: #d32f2f;
+    color: white;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #ffebee;
+    color: #d32f2f;
+  }
+  
+  tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .filter-select, .date-input, .marks-input, .status-select {
+    padding: 8px;
+    border: 1px solid #d32f2f;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  
+  .action-button, .submit-button, .save-button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .action-button {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  
+  .action-button:hover {
+    background-color: #bdbdbd;
+  }
+  
+  .submit-button, .save-button {
+    background-color: #d32f2f;
+    color: white;
+  }
+  
+  .submit-button:hover, .save-button:hover {
+    background-color: #b71c1c;
+  }
+  
+  .present {
+    color: #2e7d32;
+    font-weight: bold;
+  }
+  
+  .absent {
+    color: #c62828;
+    font-weight: bold;
+  }
+  
+  .attendance-controls, .attendance-marking {
+    margin-bottom: 20px;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2em;
+    color: #d32f2f;
+  }
+  
+  .login-prompt {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2em;
+    color: #d32f2f;
+  }
