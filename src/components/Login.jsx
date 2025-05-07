@@ -73,6 +73,9 @@ const Login = () => {
           case 'canteen':
             navigate('/canteen');
             break;
+          case 'point':
+            navigate('/point');
+            break;
           default:
             navigate('/');
         }

@@ -1,20 +1,24 @@
 import { useState } from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { 
-  ClipboardDocumentListIcon, // For Menu
-  AcademicCapIcon, // For Enrollment
-  ArrowLeftOnRectangleIcon // For Logout
+  ClipboardDocumentListIcon,
+  AcademicCapIcon,
+  CurrencyDollarIcon,
+  UserIcon,
+  MapPinIcon,
+  ArrowLeftOnRectangleIcon // Added for logout
 } from '@heroicons/react/24/outline';
 import nedLogo from '../assets/NEDUET_logo.svg.png';
+import { useLocation } from 'react-router-dom';
 
-const LayoutTeacher = () => {
+const LayoutPoint = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
   const navItems = [
-    { name: 'Menu', icon: ClipboardDocumentListIcon, path: '/teacher/menu' },
-    { name: 'Enrollment', icon: AcademicCapIcon, path: '/teacher/enrollment' }, // Fixed spelling
+    ,
+    { name: 'Location', icon: MapPinIcon, path: '/point/location' },
   ];
 
   // Function to check if the current path matches or starts with the nav item path
@@ -26,9 +30,14 @@ const LayoutTeacher = () => {
     // Clear any user data from localStorage/sessionStorage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Or clear all storage
+    // localStorage.clear();
     
     // Redirect to login page
     navigate('/login');
+    
+    // Optional: Reload the page to reset the application state
+    // window.location.reload();
   };
 
   return (
@@ -40,7 +49,7 @@ const LayoutTeacher = () => {
           {sidebarOpen ? (
             <div className="flex items-center space-x-2">
               <img src={nedLogo} alt="NEDUET Logo" className="h-10 w-auto" />
-              <h1 className="text-xl font-bold text-gray-800">Teacher</h1> {/* Changed from "Canteen" to "Teacher" */}
+              <h1 className="text-xl font-bold text-gray-800">Student</h1>
             </div>
           ) : (
             <img src={nedLogo} alt="NEDUET Logo" className="h-10 w-auto mx-auto" />
@@ -51,11 +60,11 @@ const LayoutTeacher = () => {
           >
             {sidebarOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              
+            
               </svg>
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                
+              
               </svg>
             )}
           </button>
@@ -108,4 +117,4 @@ const LayoutTeacher = () => {
   );
 };
 
-export default LayoutTeacher;
+export default LayoutPoint;

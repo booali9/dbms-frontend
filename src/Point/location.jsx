@@ -22,6 +22,12 @@ const LocationTrackerpoint = () => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef({});
+  
+  // Get user from localStorage
+  const getUser = () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  };
 
   // Initialize map
   useEffect(() => {
@@ -78,6 +84,71 @@ const LocationTrackerpoint = () => {
     }
   }, [pointUsers]);
 
+  // Set location handler
+  const setLocation = async () => {
+    const user = getUser();
+    if (!user) {
+      setMessage('Error: User not found in localStorage');
+      return;
+    }
+
+    try {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { longitude, latitude } = position.coords;
+          const response = await axios.post('http://localhost:3000/api/location/set', {
+            userId: user._id, // Use user ID from localStorage
+            longitude,
+            latitude,
+            role: user.role // Use role from localStorage
+          });
+          setMessage(response.data.message);
+          
+          if (user.role === 'point') {
+            startLocationUpdates(user._id, longitude, latitude);
+          }
+
+          // Center map on current location
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.setView([latitude, longitude], 13);
+          }
+        },
+        (error) => {
+          setMessage(`Error getting location: ${error.message}`);
+        },
+        { enableHighAccuracy: true }
+      );
+    } catch (error) {
+      setMessage(`Error: ${error.response?.data?.error || error.message}`);
+    }
+  };
+
+  // Start periodic location updates for point users
+  const startLocationUpdates = (userId, initialLng, initialLat) => {
+    const user = getUser();
+    if (!user) return;
+
+    const intervalId = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { longitude, latitude } = position.coords;
+          await axios.post('http://localhost:3000/api/location/set', {
+            userId: user._id,
+            longitude,
+            latitude,
+            role: user.role
+          });
+        },
+        (error) => {
+          console.error('Error updating location:', error);
+        },
+        { enableHighAccuracy: true }
+      );
+    }, 5000); // Update every 5 seconds
+
+    return () => clearInterval(intervalId);
+  };
+
   // Fetch point users locations
   const getPointUsersLocations = async () => {
     try {
@@ -125,9 +196,22 @@ const LocationTrackerpoint = () => {
 
   return (
     <div className="location-tracker" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Point Users Tracking Dashboard</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Point User Location Tracking</h2>
       
       <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <button 
+          onClick={setLocation}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Set My Location
+        </button>
         <button 
           onClick={getPointUsersLocations}
           style={{
@@ -139,7 +223,7 @@ const LocationTrackerpoint = () => {
             cursor: 'pointer'
           }}
         >
-          Refresh Locations
+          Refresh Point Users
         </button>
       </div>
       

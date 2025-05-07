@@ -272,6 +272,7 @@ const Register = () => {
                   <Option value="undergrad">Undergraduate</Option>
                   <Option value="postgrad">Postgraduate</Option>
                   <Option value="canteen">Canteen</Option>
+                  <Option value="point">point</Option>
                 </Select>
               </Form.Item>
               

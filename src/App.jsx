@@ -20,6 +20,8 @@ import Enroll from './Dasboard/Enroll';
 import Marksat from './Teacher/Marks&Ate';
 import Marksatte from './Dasboard/Marks&atte';
 import LocationTracker from './Student/location';
+import LayoutPoint from './Point/Layout';
+import LocationTrackerpoint from './Point/location';
 
 const getUserRole = () => {
   const user = localStorage.getItem('user');
@@ -45,6 +47,8 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
         return <Navigate to="/teacher" replace />;
       case 'canteen':
         return <Navigate to="/canteen" replace />;
+      case 'point':
+        return <Navigate to="/point" replace />;
       default:
         return <Navigate to="/login" replace />;
     }
@@ -120,6 +124,19 @@ function App() {
           <Route index element={<MenuTeacher/>} />
           <Route path="menu" element={<MenuTeacher/>} />
           <Route path="enrollement" element={<TeacherDashboard/>} />
+        </Route>
+
+        {/* Point routes (point only) */}
+        <Route 
+          path="/point" 
+          element={
+            <ProtectedRoute allowedRoles={['point']}>
+              <LayoutPoint/>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<LocationTrackerpoint/>} />
+          <Route path="location" element={<LocationTrackerpoint/>} />
         </Route>
 
         {/* Default redirect */}
