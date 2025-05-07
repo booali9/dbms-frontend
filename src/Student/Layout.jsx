@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { 
   ClipboardDocumentListIcon,
-  AcademicCapIcon, // For Menu
+  AcademicCapIcon,
   CurrencyDollarIcon,
-   UserIcon, // For Bill
+  UserIcon,
+  MapPinIcon // Added MapPinIcon for Location
 } from '@heroicons/react/24/outline';
 import nedLogo from '../assets/NEDUET_logo.svg.png';
 import { useLocation } from 'react-router-dom';
@@ -14,13 +15,16 @@ const LayoutStudent = () => {
   const location = useLocation();
 
   const navItems = [
-    { name: 'Marks&Attendance', icon:  UserIcon, path: '/student/marks' },
+    { name: 'Marks&Attendance', icon: UserIcon, path: '/student/marks' },
     { name: 'Menu', icon: ClipboardDocumentListIcon, path: '/student/menu' },
     { name: 'Enrollement', icon: AcademicCapIcon, path: '/student/enrollement' },
- 
-    
- 
+    { name: 'Location', icon: MapPinIcon, path: '/student/location' }, // Changed to MapPinIcon
   ];
+
+  // Function to check if the current path matches or starts with the nav item path
+  const isActive = (path) => {
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  };
 
   return (
     <div className="flex h-screen bg-white">
@@ -62,10 +66,10 @@ const LayoutStudent = () => {
                   className={`
                     flex items-center p-3 rounded-lg
                     hover:bg-gray-100 transition-colors
-                    ${location.pathname === item.path ? 'bg-gray-100 text-red-600' : 'text-gray-700'}
+                    ${isActive(item.path) ? 'bg-red-50 text-red-600 font-medium' : 'text-gray-700'}
                   `}
                 >
-                  <item.icon className={`h-6 w-6 ${location.pathname === item.path ? 'text-red-600' : 'text-gray-500'}`} />
+                  <item.icon className={`h-6 w-6 ${isActive(item.path) ? 'text-red-600' : 'text-gray-500'}`} />
                   {sidebarOpen && <span className="ml-3">{item.name}</span>}
                 </Link>
               </li>

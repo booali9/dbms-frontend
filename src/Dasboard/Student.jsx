@@ -1,26 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaBuilding, FaCalendarAlt, FaEnvelope, FaLock, FaIdCard, FaUserTag, FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
+import { 
+  FaUser, 
+  FaBuilding, 
+  FaCalendarAlt, 
+  FaEnvelope, 
+  FaLock, 
+  FaIdCard, 
+  FaUserTag, 
+  FaSearch, 
+  FaEdit, 
+  FaTrash 
+} from 'react-icons/fa';
 import axios from 'axios';
+import { notification, Spin, Table, Input, Button, Form, Select, DatePicker } from 'antd';
+import { SmileOutlined, FrownOutlined } from '@ant-design/icons';
+
+const { Option } = Select;
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    department: '',
-    year: '',
-    email: '',
-    password: '',
-    id: '',
-    role: '',
-    fatherName: '',
-    dateOfBirth: '',
-    semester: ''
-  });
-
+  const [form] = Form.useForm();
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [editingUserId, setEditingUserId] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Notification configuration
+  const openNotification = (type, message, description) => {
+    notification[type]({
+      message,
+      description,
+      icon: type === 'success' ? <SmileOutlined style={{ color: '#A1252E' }} /> : <FrownOutlined style={{ color: '#A1252E' }} />,
+    });
+  };
 
   // Get token from localStorage
   const getAuthToken = () => {
@@ -52,8 +64,9 @@ const Register = () => {
     } catch (error) {
       console.error('Failed to fetch users:', error);
       if (error.response?.status === 401) {
-        alert('Session expired. Please login again.');
-        // Redirect to login if needed
+        openNotification('error', 'Session Expired', 'Please login again.');
+      } else {
+        openNotification('error', 'Error', 'Failed to fetch users. Please try again.');
       }
       setLoading(false);
     }
@@ -77,80 +90,116 @@ const Register = () => {
     setFilteredUsers(filtered);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+  const handleSubmit = async (values) => {
     try {
       if (editingUserId) {
         // Update existing user
-        await api.put(`/edituser/${editingUserId}`, formData);
-        alert('User updated successfully!');
+        await api.put(`/edituser/${editingUserId}`, values);
+        openNotification('success', 'Success', 'User updated successfully!');
       } else {
         // Register new user
-        await api.post('/register', formData);
-        alert('User registered successfully!');
+        await api.post('/register', values);
+        openNotification('success', 'Success', 'User registered successfully!');
       }
       
       fetchUsers();
       resetForm();
     } catch (error) {
       console.error('Error:', error);
-      alert(error.response?.data?.message || 'An error occurred. Please try again.');
+      openNotification('error', 'Error', error.response?.data?.message || 'An error occurred. Please try again.');
     }
   };
 
   const handleEdit = (user) => {
-    setFormData({
-      name: user.name,
-      department: user.department || '',
-      year: user.year || '',
-      email: user.email,
-      password: '',
-      id: user._id,
-      role: user.role,
-      fatherName: user.fatherName || '',
-      dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split('T')[0] : '',
-      semester: user.semester || ''
+    form.setFieldsValue({
+      ...user,
+      dateOfBirth: user.dateOfBirth ? moment(user.dateOfBirth) : null
     });
     setEditingUserId(user._id);
   };
 
   const handleDelete = async (userId) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        await api.delete(`/deleteuser/${userId}`);
-        fetchUsers();
-        alert('User deleted successfully!');
-      } catch (error) {
-        console.error('Failed to delete user:', error);
-        alert(error.response?.data?.message || 'Failed to delete user');
-      }
-    }
+    notification.warning({
+      message: 'Confirm Delete',
+      description: 'Are you sure you want to delete this user?',
+      btn: [
+        {
+          text: 'Yes',
+          style: { background: '#A1252E', color: 'white' },
+          async onClick() {
+            try {
+              await api.delete(`/deleteuser/${userId}`);
+              fetchUsers();
+              openNotification('success', 'Success', 'User deleted successfully!');
+            } catch (error) {
+              console.error('Failed to delete user:', error);
+              openNotification('error', 'Error', error.response?.data?.message || 'Failed to delete user');
+            }
+          },
+        },
+        {
+          text: 'No',
+          onClick: () => {},
+        },
+      ],
+    });
   };
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      department: '',
-      year: '',
-      email: '',
-      password: '',
-      id: '',
-      role: '',
-      fatherName: '',
-      dateOfBirth: '',
-      semester: ''
-    });
+    form.resetFields();
     setEditingUserId(null);
   };
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => <span className="text-gray-900">{text}</span>,
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (text) => <span className="text-gray-500">{text}</span>,
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+      render: (text) => <span className="capitalize text-gray-500">{text}</span>,
+    },
+    {
+      title: 'Department',
+      dataIndex: 'department',
+      key: 'department',
+      render: (text) => <span className="text-gray-500">{text || '-'}</span>,
+    },
+    {
+      title: 'Year',
+      dataIndex: 'year',
+      key: 'year',
+      render: (text) => <span className="text-gray-500">{text || '-'}</span>,
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <div className="flex space-x-2">
+          <Button
+            onClick={() => handleEdit(record)}
+            type="text"
+            icon={<FaEdit className="text-[#A1252E]" />}
+          />
+          <Button
+            onClick={() => handleDelete(record._id)}
+            type="text"
+            icon={<FaTrash className="text-red-600" />}
+          />
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="flex-1 overflow-auto bg-gray-50 p-6">
@@ -160,239 +209,174 @@ const Register = () => {
           <h2 className="text-xl font-semibold text-gray-800 mb-6">
             {editingUserId ? 'Edit User' : 'Register New User'}
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <Form
+            form={form}
+            onFinish={handleSubmit}
+            layout="vertical"
+            className="space-y-6"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="name" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaUser className="mr-2 text-[#A1252E]" /> Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Enter full name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                  required
-                />
-              </div>
+              <Form.Item
+                name="name"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaUser className="mr-2 text-[#A1252E]" /> Name
+                  </span>
+                }
+                rules={[{ required: true, message: 'Please input the name!' }]}
+              >
+                <Input placeholder="Enter full name" />
+              </Form.Item>
               
-              <div className="space-y-2">
-                <label htmlFor="email" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaEnvelope className="mr-2 text-[#A1252E]" /> Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                  required
-                />
-              </div>
+              <Form.Item
+                name="email"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaEnvelope className="mr-2 text-[#A1252E]" /> Email
+                  </span>
+                }
+                rules={[
+                  { required: true, message: 'Please input the email!' },
+                  { type: 'email', message: 'Please enter a valid email!' },
+                ]}
+              >
+                <Input placeholder="Enter email" />
+              </Form.Item>
               
               {!editingUserId && (
-                <div className="space-y-2">
-                  <label htmlFor="password" className="flex items-center text-sm font-medium text-gray-700">
-                    <FaLock className="mr-2 text-[#A1252E]" /> Password
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                    required={!editingUserId}
-                  />
-                </div>
+                <Form.Item
+                  name="password"
+                  label={
+                    <span className="flex items-center text-sm font-medium text-gray-700">
+                      <FaLock className="mr-2 text-[#A1252E]" /> Password
+                    </span>
+                  }
+                  rules={[{ required: true, message: 'Please input the password!' }]}
+                >
+                  <Input.Password placeholder="Enter password" />
+                </Form.Item>
               )}
               
-              <div className="space-y-2">
-                <label htmlFor="role" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaUserTag className="mr-2 text-[#A1252E]" /> Role
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                  required
-                >
-                  <option value="">Select role</option>
-                  <option value="superadmin">Super Admin</option>
-                  <option value="teacher">Teacher</option>
-                  <option value="undergrad">Undergraduate</option>
-                  <option value="postgrad">Postgraduate</option>
-                  <option value="canteen">Canteen</option>
-                </select>
-              </div>
+              <Form.Item
+                name="role"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaUserTag className="mr-2 text-[#A1252E]" /> Role
+                  </span>
+                }
+                rules={[{ required: true, message: 'Please select a role!' }]}
+              >
+                <Select placeholder="Select role">
+                  <Option value="superadmin">Super Admin</Option>
+                  <Option value="teacher">Teacher</Option>
+                  <Option value="undergrad">Undergraduate</Option>
+                  <Option value="postgrad">Postgraduate</Option>
+                  <Option value="canteen">Canteen</Option>
+                </Select>
+              </Form.Item>
               
-              <div className="space-y-2">
-                <label htmlFor="department" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaBuilding className="mr-2 text-[#A1252E]" /> Department
-                </label>
-                <input
-                  type="text"
-                  id="department"
-                  name="department"
-                  placeholder="Enter department"
-                  value={formData.department}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                />
-              </div>
+              <Form.Item
+                name="department"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaBuilding className="mr-2 text-[#A1252E]" /> Department
+                  </span>
+                }
+              >
+                <Input placeholder="Enter department" />
+              </Form.Item>
               
-              <div className="space-y-2">
-                <label htmlFor="year" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaCalendarAlt className="mr-2 text-[#A1252E]" /> Year
-                </label>
-                <input
-                  type="number"
-                  id="year"
-                  name="year"
-                  placeholder="Enter year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                />
-              </div>
+              <Form.Item
+                name="year"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaCalendarAlt className="mr-2 text-[#A1252E]" /> Year
+                  </span>
+                }
+              >
+                <Input type="number" placeholder="Enter year" />
+              </Form.Item>
               
-              <div className="space-y-2">
-                <label htmlFor="semester" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaCalendarAlt className="mr-2 text-[#A1252E]" /> Semester
-                </label>
-                <input
-                  type="number"
-                  id="semester"
-                  name="semester"
-                  placeholder="Enter semester"
-                  value={formData.semester}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                />
-              </div>
+              <Form.Item
+                name="semester"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaCalendarAlt className="mr-2 text-[#A1252E]" /> Semester
+                  </span>
+                }
+              >
+                <Input type="number" placeholder="Enter semester" />
+              </Form.Item>
               
-              <div className="space-y-2">
-                <label htmlFor="fatherName" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaUser className="mr-2 text-[#A1252E]" /> Father's Name
-                </label>
-                <input
-                  type="text"
-                  id="fatherName"
-                  name="fatherName"
-                  placeholder="Enter father's name"
-                  value={formData.fatherName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                />
-              </div>
+              <Form.Item
+                name="fatherName"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaUser className="mr-2 text-[#A1252E]" /> Father's Name
+                  </span>
+                }
+              >
+                <Input placeholder="Enter father's name" />
+              </Form.Item>
               
-              <div className="space-y-2">
-                <label htmlFor="dateOfBirth" className="flex items-center text-sm font-medium text-gray-700">
-                  <FaCalendarAlt className="mr-2 text-[#A1252E]" /> Date of Birth
-                </label>
-                <input
-                  type="date"
-                  id="dateOfBirth"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-                />
-              </div>
+              <Form.Item
+                name="dateOfBirth"
+                label={
+                  <span className="flex items-center text-sm font-medium text-gray-700">
+                    <FaCalendarAlt className="mr-2 text-[#A1252E]" /> Date of Birth
+                  </span>
+                }
+              >
+                <DatePicker className="w-full" />
+              </Form.Item>
             </div>
             
             <div className="flex space-x-4">
-              <button 
-                type="submit" 
-                className="flex-1 bg-[#A1252E] hover:bg-[#8a1e27] text-white font-medium py-2 px-4 rounded-md transition-colors duration-200"
+              <Button 
+                type="primary"
+                htmlType="submit"
+                className="flex-1 bg-[#A1252E] hover:bg-[#8a1e27] text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 border-[#A1252E]"
               >
                 {editingUserId ? 'Update User' : 'Register'}
-              </button>
+              </Button>
               
               {editingUserId && (
-                <button 
-                  type="button"
+                <Button 
                   onClick={resetForm}
                   className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200"
                 >
                   Cancel
-                </button>
+                </Button>
               )}
             </div>
-          </form>
+          </Form>
         </div>
 
         {/* Display Registered Users */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-gray-800">Registered Users</h2>
-            <div className="relative w-64">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaSearch className="text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A1252E] focus:border-transparent"
-              />
-            </div>
+            <Input
+              placeholder="Search users..."
+              prefix={<FaSearch className="text-gray-400" />}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-64"
+            />
           </div>
           
           {loading ? (
-            <p className="text-gray-500">Loading users...</p>
-          ) : filteredUsers.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user._id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{user.role}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.department || '-'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.year || '-'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleEdit(user)}
-                            className="text-[#A1252E] hover:text-[#8a1e27]"
-                            title="Edit"
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user._id)}
-                            className="text-red-600 hover:text-red-800"
-                            title="Delete"
-                          >
-                            <FaTrash />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="flex justify-center">
+              <Spin size="large" />
             </div>
+          ) : filteredUsers.length > 0 ? (
+            <Table
+              columns={columns}
+              dataSource={filteredUsers}
+              rowKey="_id"
+              pagination={{ pageSize: 10 }}
+              className="custom-antd-table"
+            />
           ) : (
             <p className="text-gray-500">No users found{searchTerm ? ` matching "${searchTerm}"` : ''}</p>
           )}

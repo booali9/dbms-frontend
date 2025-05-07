@@ -7,7 +7,7 @@ import nedLogo from '../assets/NEDUET_logo.svg.png';
 import backgroundImage from '../assets/backimage.jpg';
 
 const Login = () => {
-  const [activeTab, setActiveTab] = useState('undergraduate');
+  const [activeTab, setActiveTab] = useState('student');
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [captcha, setCaptcha] = useState('');
@@ -46,31 +46,35 @@ const Login = () => {
       let endpoint = '';
       const loginData = { email: id, password };
 
-      switch (activeTab) {
-        case 'undergraduate':
-          endpoint = 'http://localhost:3000/api/user/login/undergrad';
-          break;
-        case 'postgraduate':
-          endpoint = 'http://localhost:3000/api/user/login/postgrad';
-          break;
-        default:
-          endpoint = 'http://localhost:3000/api/user/login/allother';
+      if (activeTab === 'student') {
+        endpoint = 'http://localhost:3000/api/user/login/undergrad';
+      } else { // employee
+        endpoint = 'http://localhost:3000/api/user/login/allother';
       }
 
       const response = await axios.post(endpoint, loginData);
       
       if (response.status === 200) {
-        // Store token and user data in localStorage
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         
         // Redirect based on user role
-        if (response.data.user.role === 'undergrad' || response.data.user.role === 'postgrad') {
-          navigate('/student');
-        } else if (response.data.user.role === 'employee') {
-          navigate('/dashboard');
-        } else {
-          navigate('/');
+        switch(response.data.user.role) {
+          case 'superadmin':
+            navigate('/admin');
+            break;
+          case 'undergrad':
+          case 'postgrad':
+            navigate('/student');
+            break;
+          case 'teacher':
+            navigate('/teacher');
+            break;
+          case 'canteen':
+            navigate('/canteen');
+            break;
+          default:
+            navigate('/');
         }
       } else {
         setError(response.data.message || 'Login failed. Please try again.');
@@ -123,7 +127,7 @@ const Login = () => {
         </div>
 
         <div className="flex justify-between mb-6 border-b border-gray-200">
-          {['undergraduate', 'postgraduate', 'employee'].map((tab) => (
+          {['student', 'employee'].map((tab) => (
             <motion.button
               key={tab}
               className={`
@@ -151,7 +155,7 @@ const Login = () => {
             transition={{ duration: 0.3 }}
           >
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Login
+              {activeTab === 'student' ? 'Student' : 'Employee'} Login
             </h2>
             
             {error && (

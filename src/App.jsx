@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Layout from './Dasboard/Layout';
 import Dashboard from './Dasboard/Dahboard';
-import Register from './Dasboard/Student';
 import UserManagement from './Dasboard/Student';
 import DepartmentCourseManagement from './Dasboard/Department';
 import StartEnrollement from './Dasboard/StartEnrollement';
@@ -20,18 +19,39 @@ import TeacherDashboard from './Teacher/Teacher';
 import Enroll from './Dasboard/Enroll';
 import Marksat from './Teacher/Marks&Ate';
 import Marksatte from './Dasboard/Marks&atte';
+import LocationTracker from './Student/location';
 
-// Assuming you have an auth store or context
-// If not, you'll need to implement authentication logic
-function useAuthStore() {
-  // This is a placeholder - replace with your actual auth logic
-  return { user: localStorage.getItem('token') ? { /* user data */ } : null };
-}
+const getUserRole = () => {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user).role : null;
+};
 
-function PrivateRoute({ children }) {
-  const { user } = useAuthStore();
-  return user ? children : <Navigate to="/login" replace />;
-}
+const ProtectedRoute = ({ allowedRoles, children }) => {
+  const userRole = getUserRole();
+  
+  if (!userRole) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!allowedRoles.includes(userRole)) {
+    // Redirect to default route for their role
+    switch(userRole) {
+      case 'superadmin':
+        return <Navigate to="/admin" replace />;
+      case 'undergrad':
+      case 'postgrad':
+        return <Navigate to="/student" replace />;
+      case 'teacher':
+        return <Navigate to="/teacher" replace />;
+      case 'canteen':
+        return <Navigate to="/canteen" replace />;
+      default:
+        return <Navigate to="/login" replace />;
+    }
+  }
+
+  return children;
+};
 
 function App() {
   return (
@@ -40,13 +60,13 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         
-        {/* Protected routes */}
+        {/* Admin routes (superadmin only) */}
         <Route 
-          path="/" 
+          path="/admin" 
           element={
-        
+            <ProtectedRoute allowedRoles={['superadmin']}>
               <Layout />
-            
+            </ProtectedRoute>
           }
         >
           <Route index element={<Dashboard />} />
@@ -56,39 +76,55 @@ function App() {
           <Route path='canteeninfo' element={<CanteenInfo/>} />
           <Route path='enroll' element={<Enroll/>} />
           <Route path='marks' element={<Marksatte/>} />
-         
-          
         </Route>
 
+        {/* Canteen routes (canteen only) */}
+        <Route 
+          path="/canteen" 
+          element={
+            <ProtectedRoute allowedRoles={['canteen']}>
+              <LayoutCanteen />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Menu />} />
+          <Route path="menu" element={<Menu />} />
+          <Route path="bill" element={<BILLS/>} />
+        </Route>
 
-        <Route path="/canteen" element={<LayoutCanteen />}>
-        <Route index element={<Menu />} />
-        <Route path="menu" element={<Menu />} />
-        
-        <Route path="bill" element={<BILLS/>} />
-        
-      </Route>
-        <Route path="/student" element={<LayoutStudent/>}>
-        <Route index element={<MenuStudent/>} />
-        <Route path="menu" element={<MenuStudent/>} />
-        <Route path="enrollement" element={<Student/>} />
-        <Route path="marks" element={<Marksat/>} />
-        
-        
-        
-      </Route>
+        {/* Student routes (undergrad/postgrad only) */}
+        <Route 
+          path="/student" 
+          element={
+            <ProtectedRoute allowedRoles={['undergrad', 'postgrad']}>
+              <LayoutStudent/>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<MenuStudent/>} />
+          <Route path="menu" element={<MenuStudent/>} />
+          <Route path="enrollement" element={<Student/>} />
+          <Route path="marks" element={<Marksat/>} />
+          <Route path="location" element={<LocationTracker/>} />
+        </Route>
       
-        <Route path="/teacher" element={<LayoutTeacher/>}>
-        <Route index element={<MenuTeacher/>} />
-        <Route path="menu" element={<MenuTeacher/>} />
-        <Route path="enrollement" element={<TeacherDashboard/>} />
-        
-        
-        
-        
-      </Route>
-        {/* Fallback route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Teacher routes (teacher only) */}
+        <Route 
+          path="/teacher" 
+          element={
+            <ProtectedRoute allowedRoles={['teacher']}>
+              <LayoutTeacher/>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<MenuTeacher/>} />
+          <Route path="menu" element={<MenuTeacher/>} />
+          <Route path="enrollement" element={<TeacherDashboard/>} />
+        </Route>
+
+        {/* Default redirect */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
