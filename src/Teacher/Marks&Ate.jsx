@@ -17,19 +17,19 @@ const StudentDashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const [coursesRes, progressionRes, availableRes, attendanceRes, marksRes] = await Promise.all([
-          axios.get('http://localhost:3000/api/student/getstudentcourse', {
+          axios.get('https://dbms-project-iota.vercel.app/api/student/getstudentcourse', {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:3000/api/student/progression', {
+          axios.get('https://dbms-project-iota.vercel.app/api/student/progression', {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:3000/api/student/getavailablecourses', {
+          axios.get('https://dbms-project-iota.vercel.app/api/student/getavailablecourses', {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:3000/api/student/attendance', {
+          axios.get('https://dbms-project-iota.vercel.app/api/student/attendance', {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:3000/api/student/marks', {
+          axios.get('https://dbms-project-iota.vercel.app/api/student/marks', {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -57,7 +57,7 @@ const StudentDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:3000/api/student/update-semester',
+        'https://dbms-project-iota.vercel.app/api/student/update-semester',
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -77,7 +77,7 @@ const StudentDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:3000/api/student/enroll',
+        'https://dbms-project-iota.vercel.app/api/student/enroll',
         { courseId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -85,10 +85,10 @@ const StudentDashboard = () => {
       
       // Refresh data
       const [coursesRes, availableRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/student/getstudentcourse', {
+        axios.get('https://dbms-project-iota.vercel.app/api/student/getstudentcourse', {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get('http://localhost:3000/api/student/getavailablecourses', {
+        axios.get('https://dbms-project-iota.vercel.app/api/student/getavailablecourses', {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);

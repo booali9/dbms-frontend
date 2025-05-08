@@ -31,7 +31,7 @@ const Student = () => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/api/student/getavailablecourses', {
+      const response = await axios.get('https://dbms-project-iota.vercel.app/api/student/getavailablecourses', {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ const Student = () => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/api/student/getstudentcourse', {
+      const response = await axios.get('https://dbms-project-iota.vercel.app/api/student/getstudentcourse', {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ const Student = () => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3000/api/student/courseenroll', 
+      const response = await axios.post('https://dbms-project-iota.vercel.app/api/student/courseenroll', 
         { courseIds: selectedCourses },
         { 
           headers: { 
@@ -106,7 +106,7 @@ const Student = () => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:3000/api/student/submitfeedback', 
+      await axios.post('https://dbms-project-iota.vercel.app/api/student/submitfeedback', 
         { courseId: feedback.courseId, feedback: feedback.text },
         { 
           headers: { 

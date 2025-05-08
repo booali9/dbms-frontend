@@ -15,7 +15,7 @@ const Enroll = () => {
     const fetchPendingEnrollments = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:3000/api/admin/getpendingenrollement', {
+        const response = await axios.get('https://dbms-project-iota.vercel.app/api/admin/getpendingenrollement', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -35,7 +35,7 @@ const Enroll = () => {
   // Approve single enrollment
   const handleApprove = async (enrollmentId) => {
     try {
-      await axios.post('http://localhost:3000/api/admin/approveenrollement', 
+      await axios.post('https://dbms-project-iota.vercel.app/api/admin/approveenrollement', 
         { enrollmentId },
         {
           headers: {
@@ -60,7 +60,7 @@ const Enroll = () => {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/admin/bulkenrollementapprove', 
+      await axios.post('https://dbms-project-iota.vercel.app/api/admin/bulkenrollementapprove', 
         { enrollmentIds: selectedEnrollments },
         {
           headers: {
@@ -86,7 +86,7 @@ const Enroll = () => {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/admin/rejectenrollement', 
+      await axios.post('https://dbms-project-iota.vercel.app/api/admin/rejectenrollement', 
         { 
           enrollmentId: currentEnrollment.enrollmentId,
           reason: rejectReason

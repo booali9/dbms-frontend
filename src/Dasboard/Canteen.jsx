@@ -15,7 +15,7 @@ function CanteenInfo() {
   const fetchCanteenData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:3000/api/canteen/getallmenu', {
+      const response = await axios.get('https://dbms-project-iota.vercel.app/api/canteen/getallmenu', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
 
@@ -32,7 +32,7 @@ function CanteenInfo() {
 
   const fetchBills = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/canteen/all', {
+      const response = await axios.get('https://dbms-project-iota.vercel.app/api/canteen/all', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
 

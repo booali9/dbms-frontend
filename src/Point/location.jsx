@@ -96,7 +96,7 @@ const LocationTrackerpoint = () => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { longitude, latitude } = position.coords;
-          const response = await axios.post('http://localhost:3000/api/location/set', {
+          const response = await axios.post('https://dbms-project-iota.vercel.app/api/location/set', {
             userId: user._id, // Use user ID from localStorage
             longitude,
             latitude,
@@ -132,7 +132,7 @@ const LocationTrackerpoint = () => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { longitude, latitude } = position.coords;
-          await axios.post('http://localhost:3000/api/location/set', {
+          await axios.post('https://dbms-project-chi-ten.vercel.app/api/location/set', {
             userId: user._id,
             longitude,
             latitude,
@@ -152,7 +152,7 @@ const LocationTrackerpoint = () => {
   // Fetch point users locations
   const getPointUsersLocations = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/location/point-users');
+      const response = await axios.get('https://dbms-project-chi-ten.vercel.app/api/location/point-users');
       setPointUsers(response.data);
       setMessage('Point users locations retrieved successfully');
     } catch (error) {

@@ -28,7 +28,7 @@ const EnrollmentManagement = () => {
 
   // Create axios instance with base URL and auth header
   const api = axios.create({
-    baseURL: 'http://localhost:3000/api/admin',
+    baseURL: 'https://dbms-project-iota.vercel.app/api/admin',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -38,7 +38,7 @@ const EnrollmentManagement = () => {
  const fetchAllEnrollments = async () => {
   try {
     setEnrollmentsLoading(true);
-    const response = await axios.get('http://localhost:3000/api/student/getenrollment');
+    const response = await axios.get('https://dbms-project-iota.vercel.app/api/student/getenrollment');
     setAllEnrollments(response.data.courses || []);
   } catch (error) {
     console.error('Error fetching all enrollments:', error);

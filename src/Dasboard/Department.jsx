@@ -43,7 +43,7 @@ function DepartmentCourseManagement() {
 
   // Create axios instance with base config
   const api = axios.create({
-    baseURL: 'http://localhost:3000/api/admin',
+    baseURL: 'https://dbms-project-iota.vercel.app/api/admin',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`,
       'Content-Type': 'application/json'

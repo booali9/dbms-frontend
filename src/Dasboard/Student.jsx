@@ -41,7 +41,7 @@ const Register = () => {
 
   // Configure axios instance with auth header
   const api = axios.create({
-    baseURL: 'http://localhost:3000/api/admin',
+    baseURL: 'https://dbms-project-iota.vercel.app/api/admin',
     headers: {
       'Authorization': `Bearer ${getAuthToken()}`
     }

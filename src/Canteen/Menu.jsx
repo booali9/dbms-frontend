@@ -19,7 +19,7 @@ const MenuManagement = () => {
   const fetchMenu = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/api/canteen/getmenu', {
+      const response = await axios.get('https://dbms-project-iota.vercel.app/api/canteen/getmenu', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -64,7 +64,7 @@ const MenuManagement = () => {
       }];
       
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:3000/api/canteen/menu', 
+      await axios.post('https://dbms-project-iota.vercel.app/api/canteen/menu', 
         { menu: updatedMenu },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -82,7 +82,7 @@ const MenuManagement = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:3000/api/canteen/menu/${editingItem._id}`,
+        `https://dbms-project-iota.vercel.app/api/canteen/menu/${editingItem._id}`,
         { item: editingItem.item, price: editingItem.price },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -98,7 +98,7 @@ const MenuManagement = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.delete(
-        `http://localhost:3000/api/canteen/menu/${itemId}`,
+        `https://dbms-project-iota.vercel.app/api/canteen/menu/${itemId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -112,7 +112,7 @@ const MenuManagement = () => {
       try {
         const token = localStorage.getItem('token');
         await axios.delete(
-          'http://localhost:3000/api/canteen/menu',
+          'https://dbms-project-iota.vercel.app/api/canteen/menu',
           { headers: { Authorization: `Bearer ${token}` } }
         );
         

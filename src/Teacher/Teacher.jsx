@@ -21,7 +21,7 @@ const TeacherDashboard = () => {
     const fetchAssignedCourses = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/api/teacher/courses', {
+        const response = await axios.get('https://dbms-project-iota.vercel.app/api/teacher/courses', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setCourses(response.data.courses || []);
@@ -39,10 +39,10 @@ const TeacherDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const [attendanceRes, marksRes] = await Promise.all([
-        axios.get(`http://localhost:3000/api/teacher/courses/${courseId}/attendance`, {
+        axios.get(`https://dbms-project-iota.vercel.app/api/teacher/courses/${courseId}/attendance`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`http://localhost:3000/api/teacher/courses/${courseId}/marks`, {
+        axios.get(`https://dbms-project-iota.vercel.app/api/teacher/courses/${courseId}/marks`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -87,7 +87,7 @@ const TeacherDashboard = () => {
       }));
 
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:3000/api/teacher/attendance', {
+      await axios.post('https://dbms-project-iota.vercel.app/api/teacher/attendance', {
         courseId: selectedCourse._id,
         date: attendanceDate,
         students: attendanceRecords,
@@ -109,7 +109,7 @@ const TeacherDashboard = () => {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:3000/api/teacher/marks', {
+      await axios.post('https://dbms-project-iota.vercel.app/api/teacher/marks', {
         courseId: selectedCourse._id,
         studentId,
         semester: selectedCourse.semester,

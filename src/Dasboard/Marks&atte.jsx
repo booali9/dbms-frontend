@@ -7,7 +7,7 @@ const { Option } = Select;
 
 // Configure axios instance with base URL and auth token
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'https://dbms-project-iota.vercel.app/api',
 });
 
 api.interceptors.request.use(

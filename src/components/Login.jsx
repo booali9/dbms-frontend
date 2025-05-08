@@ -47,9 +47,9 @@ const Login = () => {
       const loginData = { email: id, password };
 
       if (activeTab === 'student') {
-        endpoint = 'http://localhost:3000/api/user/login/undergrad';
+        endpoint = 'https://dbms-project-iota.vercel.app/api/user/login/undergrad';
       } else { // employee
-        endpoint = 'http://localhost:3000/api/user/login/allother';
+        endpoint = 'https://dbms-project-iota.vercel.app/api/user/login/allother';
       }
 
       const response = await axios.post(endpoint, loginData);

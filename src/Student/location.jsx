@@ -81,7 +81,7 @@ const LocationTrackerpoint = () => {
   // Fetch point users locations
   const getPointUsersLocations = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/location/point-users');
+      const response = await axios.get('https://dbms-project-iota.vercel.app/api/location/point-users');
       setPointUsers(response.data);
       setMessage('Point users locations retrieved successfully');
     } catch (error) {

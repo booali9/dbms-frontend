@@ -18,7 +18,7 @@ function BILLS() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/api/canteen/bills', {
+      const response = await axios.get('https://dbms-project-iota.vercel.app/api/canteen/bills', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -52,7 +52,7 @@ function BILLS() {
       formData.append('bill', file);
 
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3000/api/canteen/bill', formData, {
+      const response = await axios.post('https://dbms-project-iota.vercel.app/api/canteen/bill', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -77,7 +77,7 @@ function BILLS() {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        await axios.delete('http://localhost:3000/api/canteen/bill', {
+        await axios.delete('https://dbms-project-iota.vercel.app/api/canteen/bill', {
           headers: { Authorization: `Bearer ${token}` }
         });
         
