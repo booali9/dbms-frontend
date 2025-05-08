@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './TeacherDashboard.css';
+import './Teacherdashboard.css';
 
 const TeacherDashboard = () => {
   const [user, setUser] = useState(null);
