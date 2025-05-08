@@ -14,7 +14,7 @@ const LayoutTeacher = () => {
 
   const navItems = [
     { name: 'Menu', icon: ClipboardDocumentListIcon, path: '/teacher/menu' },
-    { name: 'Enrollment', icon: AcademicCapIcon, path: '/teacher/enrollment' }, // Fixed spelling
+    { name: 'Enrollment', icon: AcademicCapIcon, path: '/teacher/enrollement' }, // Fixed spelling
   ];
 
   // Function to check if the current path matches or starts with the nav item path
